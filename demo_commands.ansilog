@@ -1,0 +1,23 @@
+Script started on 2025-10-14 07:46:56+02:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="212" LINES="56"]
+]0;max@qmobile:~/Documents\]7;file://qmobile/home/max/Documents\(base) ]0;max@qmobile: ~/Documents[01;32mmax@qmobile[00m:[01;34m~/Documents[00m$ mkdir demo && cd demo
+]0;max@qmobile:~/Documents/demo\]7;file://qmobile/home/max/Documents/demo\(base) ]0;max@qmobile: ~/Documents/demo[01;32mmax@qmobile[00m:[01;34m~/Documents/demo[00m$ mkdir dir1 dir2 .hidden_dir
+]0;max@qmobile:~/Documents/demo\]7;file://qmobile/home/max/Documents/demo\(base) ]0;max@qmobile: ~/Documents/demo[01;32mmax@qmobile[00m:[01;34m~/Documents/demo[00m$ touch file1 file2 .hidden_file exec_file
+]0;max@qmobile:~/Documents/demo\]7;file://qmobile/home/max/Documents/demo\(base) ]0;max@qmobile: ~/Documents/demo[01;32mmax@qmobile[00m:[01;34m~/Documents/demo[00m$ chmod +x exec_file
+]0;max@qmobile:~/Documents/demo\]7;file://qmobile/home/max/Documents/demo\(base) ]0;max@qmobile: ~/Documents/demo[01;32mmax@qmobile[00m:[01;34m~/Documents/demo[00m$ ls
+[0m[01;34mdir1[0m  [01;34mdir2[0m  [01;32mexec_file[0m  file1  file2
+]0;max@qmobile:~/Documents/demo\]7;file://qmobile/home/max/Documents/demo\(base) ]0;max@qmobile: ~/Documents/demo[01;32mmax@qmobile[00m:[01;34m~/Documents/demo[00m$ cd .. && tree demo
+[01;34mdemo[00m
+├── [01;34mdir1[00m
+├── [01;34mdir2[00m
+├── [01;32mexec_file[00m
+├── file1
+└── file2
+
+2 directories, 3 files
+]0;max@qmobile:~/Documents\]7;file://qmobile/home/max/Documents\(base) ]0;max@qmobile: ~/Documents[01;32mmax@qmobile[00m:[01;34m~/Documents[00m$ rm demo # 测试报错
+rm: 无法删除 'demo': 是一个目录
+]0;max@qmobile:~/Documents\]7;file://qmobile/home/max/Documents\(base) ]0;max@qmobile: ~/Documents[01;32mmax@qmobile[00m:[01;34m~/Documents[00m$ rm -r demo
+]0;max@qmobile:~/Documents\]7;file://qmobile/home/max/Documents\(base) ]0;max@qmobile: ~/Documents[01;32mmax@qmobile[00m:[01;34m~/Documents[00m$ exit
+注销
+
+Script done on 2025-10-14 07:46:56+02:00 [COMMAND_EXIT_CODE="0"]

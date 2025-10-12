@@ -1,0 +1,13 @@
+(base) max@qmobile:~/Documents$ mkdir demo && cd demo
+(base) max@qmobile:~/Documents/demo$ mkdir dir1 dir2 .hidden_dir
+(base) max@qmobile:~/Documents/demo$ touch file1 file2 .hidden_file exec_file
+(base) max@qmobile:~/Documents/demo$ chmod +x exec_file
+(base) max@qmobile:~/Documents/demo$ ls
+dir1  dir2  exec_file  file1  file2
+(base) max@qmobile:~/Documents/demo$ cd .. && tree demo
+bash: tree：未找到命令
+(base) max@qmobile:~/Documents$ rm demo # 测试报错
+rm: 无法删除 'demo': 是一个目录
+(base) max@qmobile:~/Documents$ rm -r demo
+(base) max@qmobile:~/Documents$ exit
+注销
