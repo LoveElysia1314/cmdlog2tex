@@ -156,19 +156,8 @@ class LogToTexConverter:
 
     def log_to_colored_latex(self, log_content):
         """Convert ANSI log to colored LaTeX content."""
-        original_size = len(log_content)
-
         # 清理不需要的ANSI序列（保留SGR用于颜色转换）
         cleaned = self.strip_ansi_except_sgr(log_content)
-
-        # 报告清理统计
-        cleaned_size = len(cleaned)
-        removed_bytes = original_size - cleaned_size
-        if removed_bytes > 0:
-            print(
-                f"[log2tex] Cleaned {removed_bytes} bytes ({removed_bytes/original_size*100:.1f}%) of escape sequences",
-                file=sys.stderr,
-            )
 
         # Debug模式: 保存清理后的log
         if os.environ.get("LOG2TEX_DEBUG"):
@@ -342,21 +331,10 @@ class LogToTexConverter:
         Returns:
             str: 清理后的纯文本内容（无需特殊转义）
         """
-        original_size = len(log_content)
-
         # 完全去除ANSI码
         clean_content = self.strip_all_ansi_codes(log_content)
 
-        result = clean_content
-        result_size = len(result)
-
-        # 报告统计
-        print(
-            f"[log2tex] Plain mode: {original_size} → {result_size} bytes ({result_size/original_size*100:.1f}%)",
-            file=sys.stderr,
-        )
-
-        return result
+        return clean_content
 
     def css_color_to_latex(self, css_color):
         """Convert CSS color to LaTeX color name."""
@@ -500,23 +478,18 @@ def main():
     if args.mode == "plain":
         # ===== 无色模式 =====
         print(f"[log2tex] 无色模式 + {args.theme} 主题", file=sys.stderr)
-        print("[log2tex] 转换日志为纯文本LaTeX...", file=sys.stderr)
         latex_content = converter.log_to_plain_latex(input_content)
-        latex_doc = converter.generate_latex_document(latex_content)
-
     else:
         # ===== 有色模式 =====
         print(f"[log2tex] 有色模式 + {args.theme} 主题", file=sys.stderr)
-        print("[log2tex] 转换日志为彩色LaTeX...", file=sys.stderr)
         latex_content = converter.log_to_colored_latex(input_content)
-        latex_doc = converter.generate_latex_document(latex_content)
 
-    # Write output
+    # 生成完整文档并输出
+    latex_doc = converter.generate_latex_document(latex_content)
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(latex_doc)
     print(f"[log2tex] 输出已写入: {args.output}", file=sys.stderr)
-    print("[log2tex] 转换完成", file=sys.stderr)
 
 
 if __name__ == "__main__":
