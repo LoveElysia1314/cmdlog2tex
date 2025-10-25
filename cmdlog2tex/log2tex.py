@@ -486,10 +486,22 @@ def main():
 
     # 生成完整文档并输出
     latex_doc = converter.generate_latex_document(latex_content)
-    os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
+    output_dir = os.path.dirname(args.output) or "."
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 写入 LaTeX 文档
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(latex_doc)
     print(f"[log2tex] 输出已写入: {args.output}", file=sys.stderr)
+
+    # 复制 terminalboxes.sty 到输出目录
+    sty_src = os.path.join(os.path.dirname(__file__), "terminalboxes.sty")
+    sty_dst = os.path.join(output_dir, "terminalboxes.sty")
+    if os.path.exists(sty_src):
+        shutil.copy(sty_src, sty_dst)
+        print(f"[log2tex] 宏包已复制: {sty_dst}", file=sys.stderr)
+    else:
+        print(f"[log2tex] 警告: 未找到宏包文件: {sty_src}", file=sys.stderr)
 
 
 if __name__ == "__main__":
