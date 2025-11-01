@@ -1,0 +1,23 @@
+Script started on 2025-11-01 07:59:24+01:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="80" LINES="24"]
+(base) max@qmobile:~/Downloads$ #!/bin/bash
+(base) max@qmobile:~/Downloads$ # Test script: colorful terminal output demonstration
+(base) max@qmobile:~/Downloads$ # Shows file types, colors, and symlinks with tree
+(base) max@qmobile:~/Downloads$ mkdir -p colorful_demo && cd colorful_demo
+(base) max@qmobile:~/Downloads/colorful_demo$ touch normal_file.txt image.jpg archive.zip
+(base) max@qmobile:~/Downloads/colorful_demo$ mkdir directory_folder
+(base) max@qmobile:~/Downloads/colorful_demo$ echo "test" > executable_file && chmod +x executable_file
+(base) max@qmobile:~/Downloads/colorful_demo$ ln -s normal_file.txt symlink_file 
+(base) max@qmobile:~/Downloads/colorful_demo$ tree
+.
+├── archive.zip
+├── directory_folder
+├── executable_file
+├── image.jpg
+├── normal_file.txt
+└── symlink_file -> normal_file.txt
+
+1 directory, 5 files
+(base) max@qmobile:~/Downloads/colorful_demo$ cd .. && rm -rf colorful_demo
+(base) max@qmobile:~/Downloads$ 注销
+
+Script done on 2025-11-01 07:59:24+01:00 [COMMAND_EXIT_CODE="0"]
