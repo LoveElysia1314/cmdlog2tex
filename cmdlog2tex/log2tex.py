@@ -14,7 +14,10 @@ One-to-one mapping: log file → LaTeX document
 
 import re
 import os
+import sys
 import shutil
+import subprocess
+import platform
 from typing import Tuple, Optional, Dict, List
 
 
@@ -49,7 +52,7 @@ class LogAnalyzer:
         if not re.search(r"^\s*\*{4,}\s*$", content, re.MULTILINE):
             return False
         if re.search(
-            r"已(启动|停止)脚本|Started|Stopped script", content, re.IGNORECASE
+            r"Script (started|stopped)|Started|Stopped script", content, re.IGNORECASE
         ):
             return True
         separator_count = len(re.findall(r"^\s*\*{4,}\s*$", content, re.MULTILINE))
@@ -145,9 +148,9 @@ class LogAnalyzer:
         # Filter out metadata
         filtered_lines = []
         for line in middle_lines:
-            if re.match(r"^\s*已(启动|停止)脚本", line):
+            if re.match(r"^\s*Script (started|stopped)", line):
                 continue
-            if re.match(r"^\s*输出文件为", line):
+            if re.match(r"^\s*Output file is", line):
                 continue
             filtered_lines.append(line)
 
@@ -463,14 +466,148 @@ class DocumentBuilder:
 
     @staticmethod
     def copy_macro_package(output_dir: str) -> Optional[str]:
-        """Copy terminalcode.sty to output directory."""
+        """
+        Smart decision: system package preferred, local fallback.
+
+        Priority:
+        1. System-wide terminalcode package found → use it, no copy
+        2. System package not found → copy local terminalcode.sty + print tips
+
+        Args:
+            output_dir: Output directory
+
+        Returns:
+            Basename of copied .sty file, or None if using system package
+        """
+
+        # Check for system package
+        if DocumentBuilder.has_system_terminalcode():
+            print(
+                "[cmdlog2tex] Using system terminalcode package",
+                file=sys.stderr,
+            )
+            return None
+
+        # System package not found, copy local fallback
         sty_src = os.path.join(os.path.dirname(__file__), "terminalcode.sty")
         sty_dst = os.path.join(output_dir, "terminalcode.sty")
 
         if os.path.exists(sty_src):
-            shutil.copy(sty_src, sty_dst)
+            try:
+                shutil.copy(sty_src, sty_dst)
+                print(
+                    "[cmdlog2tex] Local terminalcode.sty copied to output directory",
+                    file=sys.stderr,
+                )
+                print(
+                    "[cmdlog2tex] Note: System-wide installation is recommended:",
+                    file=sys.stderr,
+                )
+                print(
+                    "[cmdlog2tex]   tlmgr update --self && tlmgr install terminalcode",
+                    file=sys.stderr,
+                )
+            except (IOError, OSError) as e:
+                print(
+                    f"[cmdlog2tex] Warning: Failed to copy terminalcode.sty: {e}",
+                    file=sys.stderr,
+                )
             return os.path.basename(sty_dst)
+
+        print(
+            "[cmdlog2tex] Warning: terminalcode.sty not found anywhere",
+            file=sys.stderr,
+        )
         return None
+
+    @staticmethod
+    def has_system_terminalcode() -> bool:
+        """
+        Check if terminalcode package is installed system-wide.
+
+        Tries multiple detection methods for cross-platform compatibility.
+
+        Returns:
+            True if system package found, False otherwise
+        """
+
+        # Method 1: Use kpsewhich (TeX Live / MacTeX)
+        try:
+            result = subprocess.run(
+                ["kpsewhich", "terminalcode.sty"],
+                capture_output=True,
+                timeout=2,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                return True
+        except (FileNotFoundError, subprocess.TimeoutExpired, Exception):
+            pass
+
+        # Method 2: Search standard TEXMF directories
+        try:
+            candidates = DocumentBuilder._get_texmf_candidates()
+            for directory in candidates:
+                sty_path = os.path.join(directory, "terminalcode.sty")
+                if os.path.isfile(sty_path):
+                    return True
+        except Exception:
+            pass
+
+        return False
+
+    @staticmethod
+    def _get_texmf_candidates() -> list:
+        """
+        Get candidate TEXMF directories for different LaTeX distributions.
+
+        Returns:
+            List of candidate directory paths to search for terminalcode.sty
+        """
+        candidates = []
+        home = os.path.expanduser("~")
+        system = platform.system()
+
+        if system == "Windows":
+            bases = [
+                "C:\\texlive",
+                "C:\\Program Files\\MiKTeX",
+                os.path.join(os.environ.get("APPDATA", ""), "MiKTeX"),
+                os.path.join(home, "texmf"),
+            ]
+            for base in bases:
+                if os.path.exists(base):
+                    candidates.extend(
+                        [
+                            os.path.join(
+                                base, "texmf-dist", "tex", "latex", "terminalcode"
+                            ),
+                            os.path.join(base, "texmf-dist", "tex", "latex"),
+                            os.path.join(base, "tex", "latex"),
+                        ]
+                    )
+        else:  # Linux / macOS
+            bases = [
+                "/usr/local/texlive",
+                "/usr/share/texlive",
+                "/opt/texlive",
+                os.path.join(home, "texmf"),
+                os.path.join(home, ".texmf"),
+            ]
+            for base in bases:
+                if os.path.exists(base):
+                    candidates.extend(
+                        [
+                            os.path.join(
+                                base, "texmf-dist", "tex", "latex", "terminalcode"
+                            ),
+                            os.path.join(base, "texmf-dist", "tex", "latex"),
+                            os.path.join(base, "tex", "latex"),
+                        ]
+                    )
+
+        return candidates
 
 
 def process_log_to_latex(

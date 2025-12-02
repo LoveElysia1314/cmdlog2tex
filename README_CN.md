@@ -160,6 +160,66 @@ commands.sh
 
 ---
 
+## terminalcode 宏包安装
+
+生成的 LaTeX 文档依赖于 **terminalcode** 宏包。该宏包已上传至 CTAN 和 GitHub，支持在线安装。
+
+### 方案 1：系统级安装（推荐）
+
+通过 LaTeX 发行版的包管理工具安装：
+
+#### TeX Live（Windows / Linux / macOS）
+```bash
+tlmgr update --self
+tlmgr install terminalcode
+```
+
+#### MiKTeX（Windows）
+```bash
+# 使用 MiKTeX 控制台 GUI
+miktex-console
+
+# 或命令行
+mpm --install-package terminalcode
+```
+
+#### macOS（MacTeX）
+```bash
+# MacTeX 基于 TeX Live
+tlmgr update --self
+tlmgr install terminalcode
+```
+
+### 方案 2：本地副本（自动）
+
+如果系统无法安装宏包，**cmdlog2tex 会自动在输出目录复制一份本地 terminalcode.sty**。你的 .tex 文件仍然可以正常编译。
+
+### 宏包资源
+
+- **CTAN**：https://ctan.org/pkg/terminalcode
+- **GitHub**：https://github.com/LoveElysia1314/terminalcode-sty
+
+---
+
+## 支持的 LaTeX 发行版
+
+| 发行版 | 系统级安装 | 本地备用 | 说明 |
+|---|---|---|---|
+| **TeX Live** | ✅ 支持 | ✅ 可用 | 推荐，官方标准 |
+| **MacTeX** | ✅ 支持 | ✅ 可用 | 推荐 macOS 用户 |
+| **MiKTeX** | ✅ 支持 | ✅ 可用 | Windows 流行选择 |
+| **Overleaf** | ✅ 预装 | ✅ 可用 | 在线编辑器，无需操作 |
+| **其他** | ⚠️ 可能支持 | ✅ 可用 | 本地备用保证兼容性 |
+
+### cmdlog2tex 的处理方式
+
+1. 首先检测系统是否已安装 terminalcode 宏包
+2. 若已安装，使用系统宝包（推荐）
+3. 若未安装，自动复制本地副本到输出目录
+4. 无论哪种情况，你的 LaTeX 文档都能成功编译
+
+---
+
 ## 故障排除
 
 - LaTeX 宏缺失：复制 `terminalcode.sty` 并使用 XeLaTeX 编译。

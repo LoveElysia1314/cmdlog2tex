@@ -1,0 +1,63 @@
+Windows PowerShell
+版权所有（C） Microsoft Corporation。保留所有权利。
+安装最新的 PowerShell，了解新功能和改进！https://aka.ms/PSWindows
+#!/bin/bash
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> #!/bin/bash
+# Test script: colorful terminal output demonstration
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> # Test script: colorful terminal output demonstration
+# Shows file types, colors, and symlinks with tree
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> # Shows file types, colors, and symlinks with tree
+mkdir -p colorful_demo && cd colorful_demo
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> mkdir -p colorful_demo && cd colorful_demo
+所在位置 行:1 字符: 24
++ mkdir -p colorful_demo && cd colorful_demo
++                        ~~
+标记“&&”不是此版本中的有效语句分隔符。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+touch normal_file.txt image.jpg archive.zip
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> touch normal_file.txt image.jpg archive.zip
+touch : 无法将“touch”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正确，然
+后再试一次。
+所在位置 行:1 字符: 1
++ touch normal_file.txt image.jpg archive.zip
++ ~~~~~
+    + CategoryInfo          : ObjectNotFound: (touch:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+mkdir directory_folder
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> mkdir directory_folder
+    目录: D:\drzqr\Documents\GitHub\cmdlog2tex\example
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----        2025/11/04     19:09                directory_folder                                                     
+echo "test" > executable_file && chmod +x executable_file
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> echo "test" > executable_file && chmod +x executable_file
+所在位置 行:1 字符: 31
++ echo "test" > executable_file && chmod +x executable_file
++                               ~~
+标记“&&”不是此版本中的有效语句分隔符。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+ln -s normal_file.txt symlink_file
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> ln -s normal_file.txt symlink_file
+ln : 无法将“ln”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正确，然后再试
+一次。
+所在位置 行:1 字符: 1
++ ln -s normal_file.txt symlink_file
++ ~~
+    + CategoryInfo          : ObjectNotFound: (ln:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+tree
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> tree
+卷 Data 的文件夹 PATH 列表
+卷序列号为 0515-BAED
+D:.
+└─directory_folder
+cd .. && rm -rf colorful_demo
+PS D:\drzqr\Documents\GitHub\cmdlog2tex\example> cd .. && rm -rf colorful_demo
+所在位置 行:1 字符: 7
++ cd .. && rm -rf colorful_demo
++       ~~
+标记“&&”不是此版本中的有效语句分隔符。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine

@@ -21,52 +21,54 @@ class CleanCommandRecorder:
         self.pending_command = None
 
     def create_log_file(self):
-        """创建日志文件"""
+        """Create log file"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.log_filename = f"{self.shell_type}_session_{timestamp}.log"
         self.log_file = open(self.log_filename, "w", encoding="utf-8")
         print(f"Recording started. Log file: {self.log_filename}")
 
     def log_output(self, output):
-        """记录输出，但不过滤提示符和命令输入"""
+        """Log output, but do not filter prompts and command inputs"""
         if not self.recording or not self.log_file or self.log_file.closed:
             return
 
-        # 跳过空行
+        # Skip empty lines
         if not output.strip():
             return
 
-        # 检测并保存当前的命令提示符
+        # Detect and save the current command prompt
         if self.current_prompt is None and ">" in output:
-            # 尝试提取提示符（如 "d:\drzqr\Downloads>"）
+            # Try to extract the prompt (e.g., "d:\drzqr\Downloads>")
             lines = output.split("\n")
             for line in lines:
                 if ">" in line and line.endswith(">"):
                     self.current_prompt = line
                     break
 
-        # 如果这是上一个命令的回显（包含提示符和命令），则跳过
-        # 但保留提示符本身
+        # If this is the echo of the previous command (containing prompt and command), skip it
+        # But keep the prompt itself
         if (
             self.last_command
             and self.current_prompt
             and output.strip().startswith(self.current_prompt)
             and output.strip()[len(self.current_prompt) :].strip() == self.last_command
         ):
-            # 这是命令回显，但我们只记录提示符，不记录重复的命令
+            # This is command echo, but we only record the prompt, not the repeated command
             self.log_file.write(self.current_prompt + "\n")
             self.log_file.flush()
             print(self.current_prompt)
-            self.last_command = None  # 重置，以便下一个命令可以正常处理
+            self.last_command = (
+                None  # Reset so the next command can be processed normally
+            )
             return
 
-        # 直接写入输出，不添加任何前缀
+        # Write output directly, without adding any prefix
         self.log_file.write(output)
         self.log_file.flush()
         print(output, end="")
 
     def start_recording(self):
-        """开始记录会话"""
+        """Start recording session"""
         self.create_log_file()
         self.recording = True
         self.start_time = datetime.now()
@@ -80,7 +82,7 @@ class CleanCommandRecorder:
             return False
 
         try:
-            # 启动子进程
+            # Start subprocess
             self.process = subprocess.Popen(
                 shell_cmd,
                 stdin=subprocess.PIPE,
@@ -91,7 +93,7 @@ class CleanCommandRecorder:
                 universal_newlines=True,
             )
 
-            # 启动输出读取线程
+            # Start output reading thread
             output_thread = threading.Thread(target=self._read_output)
             output_thread.daemon = True
             output_thread.start()
@@ -101,17 +103,17 @@ class CleanCommandRecorder:
             )
             print("-" * 50)
 
-            # 主循环：读取用户输入并发送到子进程
+            # Main loop: read user input and send to subprocess
             while self.recording and self.process.poll() is None:
                 try:
                     user_input = input()
                     if user_input.lower() == "exit":
                         break
 
-                    # 保存当前命令用于过滤
+                    # Save current command for filtering
                     self.last_command = user_input
 
-                    # 记录用户输入的命令
+                    # Record user input command
                     if self.log_file and not self.log_file.closed:
                         self.log_file.write(user_input + "\n")
                         self.log_file.flush()
@@ -134,7 +136,7 @@ class CleanCommandRecorder:
             self.stop_recording()
 
     def _read_output(self):
-        """读取子进程输出的线程函数"""
+        """Thread function to read subprocess output"""
         while self.recording and self.process and self.process.poll() is None:
             try:
                 output = self.process.stdout.readline()
@@ -146,26 +148,26 @@ class CleanCommandRecorder:
                 break
 
     def stop_recording(self):
-        """停止记录"""
+        """Stop recording"""
         if not self.recording:
             return
 
         self.recording = False
 
-        # 先停止进程
+        # Stop the process first
         if self.process and self.process.poll() is None:
             try:
-                # 发送退出命令
+                # Send exit command
                 if self.shell_type == "cmd":
                     self.process.stdin.write("exit\n")
                 elif self.shell_type == "powershell":
                     self.process.stdin.write("exit\n")
                 self.process.stdin.flush()
 
-                # 给进程一些时间正常退出
+                # Give the process some time to exit normally
                 time.sleep(1)
 
-                # 如果还在运行，强制终止
+                # If still running, force terminate
                 if self.process.poll() is None:
                     self.process.terminate()
                     self.process.wait(timeout=3)
@@ -177,7 +179,7 @@ class CleanCommandRecorder:
             except Exception as e:
                 print(f"Error stopping process: {e}")
 
-        # 然后关闭日志文件
+        # Then close the log file
         if self.log_file and not self.log_file.closed:
             try:
                 self.log_file.close()
@@ -187,13 +189,13 @@ class CleanCommandRecorder:
 
 
 def signal_handler(sig, frame):
-    """处理Ctrl+C信号"""
+    """Handle Ctrl+C signal"""
     print("\nReceived interrupt signal. Stopping recording...")
     sys.exit(0)
 
 
 def main():
-    """主函数"""
+    """Main function"""
     signal.signal(signal.SIGINT, signal_handler)
 
     print("Clean Command Line Recorder")

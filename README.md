@@ -160,6 +160,65 @@ Minimal example (XeLaTeX recommended):
 
 ---
 
+## terminalcode Package Installation
+
+The generated LaTeX documents depend on the **terminalcode** package. The package is now available on CTAN and GitHub.
+
+### Option 1: System-wide Installation (Recommended)
+
+Install via your LaTeX distribution's package manager:
+
+#### TeX Live (Windows / Linux / macOS)
+```bash
+tlmgr update --self
+tlmgr install terminalcode
+```
+
+#### MiKTeX (Windows)
+```bash
+# Using MiKTeX Console GUI
+miktex-console
+# Or via command line
+mpm --install-package terminalcode
+```
+
+#### macOS (MacTeX)
+```bash
+# MacTeX is based on TeX Live
+tlmgr update --self
+tlmgr install terminalcode
+```
+
+### Option 2: Manual Installation (Local)
+
+If system-wide installation is not available, **cmdlog2tex automatically includes a local copy** of `terminalcode.sty` in the output directory. Your .tex file will compile successfully.
+
+### Package Resources
+
+- **CTAN**: https://ctan.org/pkg/terminalcode
+- **GitHub**: https://github.com/LoveElysia1314/terminalcode-sty
+
+---
+
+## Supported LaTeX Distributions
+
+| Distribution | System Package | Local Fallback | Notes |
+|---|---|---|---|
+| **TeX Live** | ✅ Supported | ✅ Available | Recommended, standard choice |
+| **MacTeX** | ✅ Supported | ✅ Available | Recommended for macOS |
+| **MiKTeX** | ✅ Supported | ✅ Available | Popular on Windows |
+| **Overleaf** | ✅ Pre-installed | ✅ Available | Online editor, no action needed |
+| **Others** | ⚠️ May vary | ✅ Available | Local fallback ensures compatibility |
+
+### How cmdlog2tex Handles the Package
+
+1. First, checks if `terminalcode` is installed system-wide
+2. If found, uses the system package (recommended)
+3. If not found, automatically copies a local copy to your output directory
+4. Either way, your LaTeX document will compile successfully
+
+---
+
 ## Troubleshooting
 
 - LaTeX macro missing: copy `terminalcode.sty` next to your .tex and compile with XeLaTeX.
